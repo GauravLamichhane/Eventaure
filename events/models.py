@@ -40,5 +40,5 @@ class Registration(models.Model):
       constraints = [
         models.UniqueConstraint(fields=["event", "attendee"], name="unique_event_attendee")
       ]
-      def __str__(self):
-        return f"{self.attendee.email} {self.event.title}"
+  def __str__(self):
+        return f"{self.attendee.email}"
