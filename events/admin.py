@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Event
+from .models import Event, Registration
 
 
 
@@ -12,3 +12,8 @@ admin.site.index_title = "Dashboard"
 class EventAdmin(admin.ModelAdmin):
   list_display = ["title","description","event_type","organizer"]
   search_fields = ["title", "organizer"]
+
+
+@admin.register(Registration)
+class RegistrationAdmin(admin.ModelAdmin):
+  list_display = ["event","attendee"]
