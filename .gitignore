@@ -1,0 +1,73 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+env.bak/
+venv.bak/
+
+# Python tooling caches
+.tox/
+.nox/
+.ruff_cache/
+
+# Django local settings and DB
+local_settings.py
+db.sqlite3
+
+# Media and static
+media/
+media_root/
+staticfiles/
+static_root/
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.*
+
+# IDEs and editors
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Test and coverage
+.pytest_cache/
+htmlcov/
+.coverage
+
+# Type checkers and caches
+.mypy_cache/
+.pyre/
+
+# Node / frontend
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build outputs
+build/
+dist/
+
+# Misc
+celerybeat-schedule
+*.pot
