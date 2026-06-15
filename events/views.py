@@ -1,5 +1,6 @@
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -23,6 +24,72 @@ class EventViewSet(ModelViewSet):
   
   def perform_create(self, serializer):
     serializer.save(organizer = self.request.user)
+
+  def check_organizer(self, instance):
+    print(instance.organizer)
+    print(self.request.user)
+    if instance.organizer != self.request.user:
+      raise PermissionDenied("Only the Organizer can perform this action.")
+  
+  def perform_update(self, serializer):
+    self.check_organizer(self.get_object())
+    serializer.save()
+  
+  def perform_destroy(self, instance):
+    self.check_organizer(instance)
+    instance.delete()
+  
+  @action(detail=True, methods = ["post"])
+  def publish(self, request, pk=None):
+    event = self.get_object()
+    self.check_organizer(event)
+
+    if event.is_published:
+      return Response({"detail":"Event is already published."}, status=400)
+    event.is_published = True
+    event.save()
+    return Response({"detail":"Event published successfully."})
+  
+  @action(detail=True, methods=["post"])
+  def unpublish(self, request, pk = None):
+    event = self.get_object()
+    self.check_organizer(event)
+
+    if not event.is_published:
+      return Response({"detail":"Event is already unpublished."}, status=400)
+    event.is_published = False
+    event.save()
+    return Response({"detail":"Event unpublished successfully."})
+
+
+"""
+DELETE /events/1/
+        │
+        ▼
+destroy()
+        │
+        ▼
+event = self.get_object()
+        │
+        ▼
+event = Event(id=1, organizer=Ram)
+        │
+        ▼
+self.check_organizer(event)
+        │
+        ▼
+instance = event
+        │
+        ▼
+instance.organizer == self.request.user
+        │
+        ▼
+Ram == Ram
+        │
+        ▼
+True
+"""
+
 
 class RegistrationViewSet(ModelViewSet):
   serializer_class = RegistrationSerializer

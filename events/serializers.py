@@ -74,6 +74,7 @@ class EventSerializer(serializers.ModelSerializer):
       "organizer_name",
       "created_at",
       "updated_at",
+      "is_published"
     ]
 
 
