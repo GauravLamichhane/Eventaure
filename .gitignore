@@ -70,4 +70,6 @@ dist/
 
 # Misc
 celerybeat-schedule
-*.pot
+*.
+
+README.md
