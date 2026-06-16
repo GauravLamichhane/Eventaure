@@ -18,6 +18,7 @@ class Event(models.Model):
   end_datetime = models.DateTimeField()
   organizer = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="events")
   capacity = models.PositiveIntegerField(null=True, blank=True)
+  waitlist_capacity = models.PositiveIntegerField(null=True, blank=True)
   is_published = models.BooleanField(default=False)
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
@@ -29,6 +30,7 @@ class Registration(models.Model):
   STATUS_CHOICES = [
     ("registered","Registered"),
     ("cancelled","Cancelled"),
+    ("waitlisted","Waitlisted"),
   ]
   event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="event_registrations")
   attendee = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="user_registrations")

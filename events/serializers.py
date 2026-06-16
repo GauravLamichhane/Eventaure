@@ -21,6 +21,8 @@ class EventSerializer(serializers.ModelSerializer):
   def validate(self, attrs):
     start_datetime = attrs.get("start_datetime", getattr(self.instance, "start_datetime", None))
     end_datetime = attrs.get("end_datetime", getattr(self.instance, "end_datetime", None))
+    capacity = attrs.get("capacity", getattr(self.instance, "capacity", None))
+    waitlist_capacity = attrs.get("waitlist_capacity", getattr(self.instance, "waitlist_capacity", None))
 
     if start_datetime and end_datetime and end_datetime <= start_datetime:
       raise serializers.ValidationError({"end_datetime": "End date and time must be after the start date and time."})
@@ -46,6 +48,12 @@ class EventSerializer(serializers.ModelSerializer):
         raise serializers.ValidationError({"location":"Hybrid event must have a physical location."})
       if not meeting_url:
         raise serializers.ValidationError({"meeting_url":"Hybrid event must have a meeting url."})
+    
+    if waitlist_capacity is not None and capacity is not None:
+      if waitlist_capacity > capacity:
+        raise serializers.ValidationError({
+          "waitlist_capacity": "Waitlist capacity cannot exceed event capacity."
+        })
 
     return attrs
   
@@ -62,6 +70,7 @@ class EventSerializer(serializers.ModelSerializer):
             "start_datetime",
             "end_datetime",
             "capacity",
+            "waitlist_capacity",
             "is_published",
             "organizer",
             "organizer_name",
@@ -103,18 +112,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
     if event.organizer == attendee:
       raise serializers.ValidationError("Organizers cannot register to their own event.")
     
-    #Check the capacity
-    if event.capacity is not None:
-      active_registrations = Registration.objects.filter(
-        event = event,
-        status = "registered"
-      ).count()
-
-      if active_registrations >= event.capacity:
-        raise serializers.ValidationError("This event is full.")
-    
-    #check duplicate
-    if Registration.objects.filter(event = event, attendee = attendee).exists():
-      raise serializers.ValidationError("You are already registered for this event.")
+    existing = Registration.objects.filter(event = event, attendee = attendee).first()
+    if existing:
+      if existing.status in ["registered","waitlisted"]:
+        raise serializers.ValidationError("You are already registered or waitlisted for this event.")
     
     return attrs
