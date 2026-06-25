@@ -4,7 +4,7 @@ from rest_framework import serializers
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.exceptions import PermissionDenied
 from .models import Event, Registration
@@ -15,7 +15,7 @@ from .utils import send_waitlist_promotion_email
 class EventViewSet(ModelViewSet):
   serializer_class = EventSerializer
   pagination_class = None
-  permission_classes = [IsAuthenticated]
+  permission_classes = [IsAuthenticatedOrReadOnly]
   filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
   filterset_class = EventFilter
   search_fields = ['title', 'description', 'location']
