@@ -13,6 +13,26 @@ class EventSerializer(serializers.ModelSerializer):
       raise serializers.ValidationError("Title must be at least 5 characters long.")
     return value
   
+  def validate_image(self, value):
+    max_size = 5 * 1024 * 1024
+    
+    if value.size > max_size:
+      raise serializers.ValidationError(
+        "Image size cannot exceed 5MB"
+      )
+    
+    allowed_types = [
+      "image/jpeg",
+      "image/png",
+      "image/webp"
+    ]
+
+    if value.content_type not in allowed_types:
+      raise serializers.ValidationError(
+        "Only JPG, PNG, WEBP allowed"
+      )
+    return value
+
   def validate_capacity(self, value):
     if value is not None and value < 1:
       raise serializers.ValidationError("Capacity must be at least 1.")
@@ -62,6 +82,7 @@ class EventSerializer(serializers.ModelSerializer):
     fields = [
             "id",
             "title",
+            "image",
             "description",
             "event_type",
             "location",
