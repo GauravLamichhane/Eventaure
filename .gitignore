@@ -73,3 +73,5 @@ celerybeat-schedule
 *.
 
 README.md
+
+.env.docker
