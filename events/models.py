@@ -9,6 +9,7 @@ class Event(models.Model):
   ]
 
   title = models.CharField(max_length=255)
+  image = models.ImageField(upload_to="events/", blank=True, null=True)
   description = models.TextField(blank=True)
   event_type = models.CharField(max_length=20, choices=EVENT_TYPE_CHOICES, default="physical")
   location = models.CharField(max_length=255, blank=True)
