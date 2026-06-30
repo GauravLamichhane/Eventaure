@@ -23,7 +23,10 @@ class EventViewSet(ModelViewSet):
   ordering = ['-created_at']
 
   def get_queryset(self):
-    return Event.objects.all()
+    queryset = Event.objects.all()
+    if self.request.query_params.get("mine") == "true":
+      queryset = queryset.filter(organizer = self.request.user)
+    return queryset
   
   def perform_create(self, serializer):
     serializer.save(organizer = self.request.user)
